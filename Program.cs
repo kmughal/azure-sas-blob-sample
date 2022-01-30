@@ -20,6 +20,7 @@ namespace azure_storage_account_sample
             {
                 BlobClient blob = container.GetBlobClient(blobItem.Name);
                 BlobSasBuilder sas = CreateSaSToken(blob);
+                sas.SetPermissions(BlobSasPermissions.Read);
                 StorageSharedKeyCredential storageSharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
 
                 string sasToken = sas.ToSasQueryParameters(storageSharedKeyCredential).ToString();
@@ -30,22 +31,16 @@ namespace azure_storage_account_sample
 
         static BlobSasBuilder AttachSasPolicy(BlobClient blob) => new BlobSasBuilder
         {
-            Identifier = "stored access policy identifier"
+            Identifier = "stored access policy identifier",
+            ExpiresOn = DateTimeOffset.UtcNow.AddHours(1),
         };
 
-        static BlobSasBuilder CreateSaSToken(BlobClient blob)
+        static BlobSasBuilder CreateSaSToken(BlobClient blob) => new BlobSasBuilder
         {
-            BlobSasBuilder sas = new BlobSasBuilder
-            {
-                BlobContainerName = blob.BlobContainerName,
-                BlobName = blob.Name,
-                Resource = "b",
-                ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(1)
-            };
-
-            // Allow read access
-            sas.SetPermissions(BlobSasPermissions.Read);
-            return sas;
-        }
+            BlobContainerName = blob.BlobContainerName,
+            BlobName = blob.Name,
+            Resource = "b",
+            ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(1)
+        };
     }
 }

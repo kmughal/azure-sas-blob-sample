@@ -28,6 +28,11 @@ namespace azure_storage_account_sample
             Console.WriteLine("Hello World!");
         }
 
+        static BlobSasBuilder AttachSasPolicy(BlobClient blob) => new BlobSasBuilder
+        {
+            Identifier = "stored access policy identifier"
+        };
+
         static BlobSasBuilder CreateSaSToken(BlobClient blob)
         {
             BlobSasBuilder sas = new BlobSasBuilder
